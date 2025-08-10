@@ -4,15 +4,72 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { QuizForm } from '@/components/QuizForm';
 import { SelfieUploader } from '@/components/SelfieUploader';
+import { QuizAnswers } from '@/types';
+import { extractCityAndGenerateInterests } from '@/lib/gemini';
 
 const Quiz = () => {
   const navigate = useNavigate();
   const [step, setStep] = useState<'quiz' | 'selfie'>('quiz');
-  const [quizData, setQuizData] = useState<any>(null);
+  const [quizData, setQuizData] = useState<QuizAnswers | null>(null);
 
-  const handleQuizComplete = (data: any) => {
-    setQuizData(data);
-    setStep('selfie');
+  const handleQuizComplete = async (data: QuizAnswers) => {
+    console.log('🎯 Quiz completed with data:', data);
+    console.log('📝 Lifestyle text:', data.lifestyle);
+    
+    try {
+      console.log('🚀 Starting persona extraction...');
+      // Extract city, persona, and generate interests based on preferences
+      const { cityName, tripName, persona, interests } = await extractCityAndGenerateInterests(data);
+      
+      console.log('✅ Extraction successful!');
+      console.log('🏙️ Extracted city:', cityName);
+      console.log('👤 Extracted persona:', persona);
+      console.log('🎭 Trip name:', tripName);
+      console.log('🎯 Generated interests:', interests);
+      
+      const dataWithExtracted = { 
+        ...data, 
+        cityName, 
+        tripName,
+        // Store persona for itinerary generation
+        persona,
+        // Map interests to the quiz format
+        activities: interests.activities.join(', '),
+        foodDrinks: interests.foodDrinks.join(', '),
+        entertainment: interests.entertainment.join(', '),
+        sightseeing: interests.sightseeing.join(', '),
+        relaxation: interests.relaxation.join(', ')
+      };
+      
+      console.log('💾 Final quiz data:', dataWithExtracted);
+      
+      // Store persona separately for itinerary generation
+      localStorage.setItem('traveler-persona', persona);
+      console.log('💾 Stored persona in localStorage:', persona);
+      
+      setQuizData(dataWithExtracted);
+      setStep('selfie');
+    } catch (error) {
+      console.error('❌ Error extracting city and generating interests:', error);
+      console.log('🔄 Using fallback data...');
+      
+      // Fallback to user-provided data with defaults
+      const fallbackData = { 
+        ...data, 
+        cityName: 'Tokyo', 
+        tripName: 'Adventure Awaits',
+        activities: 'Shopping, Photography',
+        foodDrinks: 'Street Food, Local Specialties',
+        entertainment: 'Nightlife, Live Music',
+        sightseeing: 'Museums, Historical Sites',
+        relaxation: 'Spa & Wellness'
+      };
+      localStorage.setItem('traveler-persona', 'traveler');
+      console.log('💾 Stored fallback persona: traveler');
+      
+      setQuizData(fallbackData);
+      setStep('selfie');
+    }
   };
 
   const handleSelfieComplete = (selfieUrl: string) => {

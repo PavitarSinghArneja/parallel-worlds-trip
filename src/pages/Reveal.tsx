@@ -2,39 +2,83 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { UniversePoster } from '@/components/UniversePoster';
+import { generateParallelSelf } from '@/lib/gemini';
+import { generateParallelSelfImage } from '@/lib/openai';
+import { ParallelSelf } from '@/types';
 
 const Reveal = () => {
   const navigate = useNavigate();
-  const [universeData, setUniverseData] = useState<any>(null);
+  const [universeData, setUniverseData] = useState<ParallelSelf | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // Get quiz data from localStorage
-    const quizData = localStorage.getItem('parallel-quiz');
-    if (quizData) {
-      const data = JSON.parse(quizData);
-      // Mock universe generation for demo
-      setUniverseData({
-        universeTag: "Adventurous Nomad",
-        description: "In this universe, you're a fearless digital nomad who's traveled to 47 countries",
-        imageUrl: "/placeholder.svg", // Will be replaced with AI-generated image
-        traits: ["Risk-taker", "Tech-savvy", "Minimalist", "Culture enthusiast"]
-      });
-    } else {
-      navigate('/quiz');
-    }
+    const generateUniverse = async () => {
+      try {
+        const quizData = localStorage.getItem('parallel-quiz');
+        if (!quizData) {
+          navigate('/quiz');
+          return;
+        }
+
+        const data = JSON.parse(quizData);
+        setIsLoading(true);
+        setError(null);
+
+        // Generate parallel self using Gemini AI
+        const parallelSelf = await generateParallelSelf(data);
+        
+        // Generate image using OpenAI
+        const imageUrl = await generateParallelSelfImage(parallelSelf, data.selfieUrl);
+        
+        const completeUniverseData = {
+          ...parallelSelf,
+          imageUrl
+        };
+
+        setUniverseData(completeUniverseData);
+        // Store the complete data for the trip page
+        localStorage.setItem('parallel-universe', JSON.stringify(completeUniverseData));
+        
+      } catch (err) {
+        console.error('Error generating universe:', err);
+        setError('Failed to generate your parallel universe. Please try again.');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    generateUniverse();
   }, [navigate]);
 
   const handleStealTrip = () => {
     // Navigate to trip page with generated itinerary
-    navigate('/trip/demo-trip');
+    const tripId = `trip-${Date.now()}`;
+    navigate(`/trip/${tripId}`);
   };
 
-  if (!universeData) {
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="glass-card p-8 text-center max-w-md">
+          <p className="text-red-400 mb-4">{error}</p>
+          <Button onClick={() => navigate('/quiz')} variant="outline">
+            Try Again
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  if (isLoading || !universeData) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="glass-card p-8 text-center">
           <div className="animate-spin w-8 h-8 border-2 border-primary border-t-transparent rounded-full mx-auto mb-4"></div>
           <p>Scanning parallel universes...</p>
+          <p className="text-sm text-muted-foreground mt-2">
+            This may take a minute while we generate your alternate self
+          </p>
         </div>
       </div>
     );

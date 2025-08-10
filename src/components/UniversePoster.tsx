@@ -1,23 +1,35 @@
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-
-interface UniverseData {
-  universeTag: string;
-  description: string;
-  imageUrl: string;
-  traits: string[];
-}
+import { ParallelSelf } from '@/types';
 
 interface UniversePosterProps {
-  data: UniverseData;
+  data: ParallelSelf;
 }
 
 export const UniversePoster: React.FC<UniversePosterProps> = ({ data }) => {
   return (
     <Card className="universe-poster p-8 max-w-md mx-auto cosmic-float">
       <div className="space-y-6">
-        <div className="aspect-square bg-gradient-neon rounded-lg flex items-center justify-center text-6xl">
-          🌟
+        <div className="aspect-square bg-gradient-neon rounded-lg overflow-hidden">
+          {data.imageUrl ? (
+            <img 
+              src={data.imageUrl} 
+              alt={`${data.universeTag} in their universe`}
+              className="w-full h-full object-cover"
+              onError={(e) => {
+                // Fallback if image fails to load
+                (e.target as HTMLImageElement).style.display = 'none';
+                const fallback = document.createElement('div');
+                fallback.className = 'w-full h-full flex items-center justify-center text-6xl bg-gradient-neon';
+                fallback.textContent = '🌟';
+                e.target?.parentNode?.appendChild(fallback);
+              }}
+            />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center text-6xl">
+              🌟
+            </div>
+          )}
         </div>
         
         <div className="text-center space-y-4">

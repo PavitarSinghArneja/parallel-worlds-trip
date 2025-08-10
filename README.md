@@ -1,73 +1,111 @@
-# Welcome to your Lovable project
+# Parallel Worlds Trip 🌟
 
-## Project info
+An AI-powered travel app that generates your parallel universe self and creates personalized travel itineraries based on who you could be in another universe.
 
-**URL**: https://lovable.dev/projects/0cf4f0ce-0c2d-4369-9a0e-f2e788187659
+## Features
 
-## How can I edit this code?
+- **AI-Powered Quiz**: Answer questions about your alternate life choices
+- **Parallel Self Generation**: Uses Google Gemini AI to create your alternate universe persona
+- **AI-Generated Images**: Creates visual representations using OpenAI's DALL-E 3
+- **Personalized Itineraries**: Generates custom 7-day travel plans based on your parallel self
+- **Universe Points System**: Gamified experience system for completing activities
 
-There are several ways of editing your application.
+## Setup Instructions
 
-**Use Lovable**
-
-Simply visit the [Lovable Project](https://lovable.dev/projects/0cf4f0ce-0c2d-4369-9a0e-f2e788187659) and start prompting.
-
-Changes made via Lovable will be committed automatically to this repo.
-
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
+### 1. Install Dependencies
 ```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+npm install
+```
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+### 2. Set up API Keys
 
-# Step 3: Install the necessary dependencies.
-npm i
+You'll need API keys for:
+- **Google Gemini AI** (for text generation)
+- **OpenAI** (for image generation)
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+#### Get Your API Keys:
+
+**Gemini API Key:**
+1. Go to [Google AI Studio](https://aistudio.google.com/)
+2. Create a new API key
+3. Copy the key
+
+**OpenAI API Key:**
+1. Go to [OpenAI Platform](https://platform.openai.com/)
+2. Create an account and add billing information
+3. Go to API Keys section
+4. Create a new API key
+5. Copy the key
+
+#### Configure Environment Variables:
+
+1. Copy the example environment file:
+```sh
+cp .env.example .env
+```
+
+2. Edit the `.env` file and add your API keys:
+```env
+VITE_GEMINI_API_KEY=your_gemini_api_key_here
+VITE_OPENAI_API_KEY=your_openai_api_key_here
+```
+
+### 3. Start Development Server
+```sh
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+### 4. Build for Production
+```sh
+npm run build
+```
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+## Project Structure
 
-**Use GitHub Codespaces**
+- `src/lib/gemini.ts` - Gemini AI integration for text generation
+- `src/lib/openai.ts` - OpenAI integration for image generation
+- `src/pages/Quiz.tsx` - Interactive quiz for discovering your parallel self
+- `src/pages/Reveal.tsx` - AI-generated parallel universe reveal
+- `src/pages/Trip.tsx` - Personalized travel itinerary based on your parallel self
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+## How It Works
 
-## What technologies are used for this project?
+1. **Take the Extended Quiz**: Answer questions about your dream lifestyle, personality, and preferences
+2. **Plan Your Trip**: Enter your destination, dates, and trip details
+3. **Choose Your Interests**: Select from curated examples or add your own preferences for:
+   - Activities & Adventures
+   - Food & Drinks  
+   - Urban Entertainment & Nightlife
+   - Sightseeing & Culture
+   - Relaxation & Wellness
+4. **Upload a Selfie**: (Optional) For personalized image generation
+5. **Discover Your Parallel Self**: AI generates who you could be in another universe
+6. **Get Your AI-Generated Image**: See a visual representation of your parallel self
+7. **Get Your Detailed Itinerary**: Receive a comprehensive, personalized travel plan with:
+   - Day-by-day activities (morning, afternoon, evening)
+   - Specific restaurant recommendations with dishes to try
+   - Must-do attractions with insider tips
+   - Hotel recommendations
+   - Transportation tips and cost-saving advice
+   - Local insider secrets
+   - Budget estimates
+   - Weather considerations and packing lists
+8. **Earn Universe Points**: Complete activities to unlock achievements (gamified view)
 
-This project is built with:
+## Technologies Used
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+- **Frontend**: React, TypeScript, Vite
+- **UI Components**: shadcn/ui, Tailwind CSS
+- **AI Integration**: Google Gemini AI, OpenAI DALL-E 3
+- **Routing**: React Router DOM
+- **State Management**: React Context
 
-## How can I deploy this project?
+## Important Notes
 
-Simply open [Lovable](https://lovable.dev/projects/0cf4f0ce-0c2d-4369-9a0e-f2e788187659) and click on Share -> Publish.
+- **API Costs**: Both Gemini and OpenAI APIs have usage costs. Monitor your usage in their respective dashboards.
+- **Rate Limits**: Be aware of API rate limits, especially for image generation.
+- **CORS**: The OpenAI integration uses `dangerouslyAllowBrowser: true` for demo purposes. In production, implement a backend proxy.
 
-## Can I connect a custom domain to my Lovable project?
+## License
 
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+This project is for educational and demo purposes.
