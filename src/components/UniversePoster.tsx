@@ -46,7 +46,7 @@ export const UniversePoster: React.FC<UniversePosterProps> = ({ data }) => {
               <Badge 
                 key={index} 
                 variant="secondary"
-                className="bg-gradient-glass border border-primary/30"
+                className="bg-gradient-glass border border-primary/30 text-white"
               >
                 {trait}
               </Badge>
